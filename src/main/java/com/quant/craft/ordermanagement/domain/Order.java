@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -28,12 +30,12 @@ public class Order {
     private Long tradingBotId;
     private String symbol;
     private String exchange;
-    private Double size;
-    private Double limit;
-    private Double stop;
-    private Double sl;
-    private Double tp;
-    private Double leverage;
+    private BigDecimal size;
+    private BigDecimal limit;
+    private BigDecimal stop;
+    private BigDecimal sl;
+    private BigDecimal tp;
+    private BigDecimal leverage;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
@@ -51,7 +53,7 @@ public class Order {
 
     @Builder
     public Order(String orderId, Long botId, Long tradingBotId, String symbol, String exchange,
-                 Double size, Double limit, Double stop, Double sl, Double tp, Double leverage,
+                 BigDecimal size, BigDecimal limit, BigDecimal stop, BigDecimal sl, BigDecimal tp, BigDecimal leverage,
                  OrderType type, OrderPosition position, OrderStatus status) {
         this.orderId = orderId;
         this.botId = botId;

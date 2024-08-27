@@ -3,6 +3,8 @@ package com.quant.craft.ordermanagement.dto;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class OrderDto {
 
@@ -17,12 +19,12 @@ public class OrderDto {
     @NotNull
     private Exchange exchange;
     @NotNull
-    private Double size;
-    private Double limit;
-    private Double stop;
-    private Double sl;
-    private Double tp;
-    private Double leverage;
+    private BigDecimal size;
+    private BigDecimal limit;
+    private BigDecimal stop;
+    private BigDecimal sl;
+    private BigDecimal tp;
+    private BigDecimal leverage;
     private Boolean exclusiveOrders;
     private Boolean hedgeMode;
 
