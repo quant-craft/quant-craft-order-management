@@ -1,6 +1,6 @@
 package com.quant.craft.ordermanagement.factory;
 
-import com.quant.craft.ordermanagement.service.OrderService;
+import com.quant.craft.ordermanagement.service.TradingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -10,10 +10,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class OrderServiceFactory {
 
-    private final Map<String, OrderService> orderServices;
+    private final Map<String, TradingService> orderServices;
 
-    public OrderService getOrderService(String exchange) {
-        OrderService service = orderServices.get(exchange.toLowerCase() + "OrderService");
+    public TradingService getOrderService(String exchange) {
+        TradingService service = orderServices.get(exchange.toLowerCase() + "TradingService");
         if (service == null) {
             throw new IllegalArgumentException("Unsupported exchange: " + exchange);
         }
