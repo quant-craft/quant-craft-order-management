@@ -1,13 +1,10 @@
 package com.quant.craft.ordermanagement.domain;
 
 public enum OrderStatus {
-    OPEN,
+    NONE,
     PARTIALLY_FILLED,
     FILLED,
     CANCELED,
-    REJECTED;
+    EXPIRED,
 
-    public boolean isActive() {
-        return this == OPEN || this == PARTIALLY_FILLED;
-    }
 }
