@@ -24,7 +24,7 @@ public class OrderDto {
     private BigDecimal stop;
     private BigDecimal sl;
     private BigDecimal tp;
-    private BigDecimal leverage;
+    private int leverage;
     private Boolean exclusiveOrders;
     private Boolean hedgeMode;
 

@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class SimulatedOrderService implements OrderService{
+public class BinanceTradingService implements TradingService {
     @Override
     public void processOrder(OrderDto orderDto) {
-        log.info("SimulatedOrderService - ProcessOrder");
+        log.info("BinanceOrderService - ProcessOrder");
     }
 }
