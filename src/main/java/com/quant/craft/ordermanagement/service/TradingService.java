@@ -2,6 +2,6 @@ package com.quant.craft.ordermanagement.service;
 
 import com.quant.craft.ordermanagement.dto.OrderDto;
 
-public interface OrderService {
+public interface TradingService {
     void processOrder(OrderDto orderDto);
 }
