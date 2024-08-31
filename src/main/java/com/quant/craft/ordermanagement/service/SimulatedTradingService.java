@@ -19,7 +19,6 @@ import java.util.List;
 public class SimulatedTradingService implements TradingService {
 
     private final OrderService orderService;
-    private final TradeRepository tradeRepository;
     private final PositionService positionService;
     private final ApplicationEventPublisher eventPublisher;
 
@@ -76,7 +75,6 @@ public class SimulatedTradingService implements TradingService {
     @Transactional
     public void handleTradeExecuted(OrderResponseEvent event) {
         Trade trade = event.getTrade();
-        tradeRepository.save(trade);
 
         Order order = event.getOrder();
         orderService.updateOrderStatus(order, OrderStatus.FILLED, ProcessingStatus.COMPLETED);
