@@ -104,16 +104,15 @@ public class Position {
         this.closedAt = LocalDateTime.now();
     }
 
-    public void partialClose(BigDecimal closeSize, BigDecimal exitPrice) {
+    public BigDecimal partialClose(BigDecimal closeSize, BigDecimal exitPrice) {
         if (closeSize.compareTo(this.size) > 0) {
             throw new IllegalArgumentException("Close size cannot be greater than position size");
         }
 
         BigDecimal closingRatio = closeSize.divide(this.size, 8, RoundingMode.HALF_UP);
-        BigDecimal pnl = calculatePnl(exitPrice).multiply(closingRatio);
-
-        this.realizedPnl = this.realizedPnl.add(pnl);
         this.size = this.size.subtract(closeSize);
+
+        return calculatePnl(exitPrice).multiply(closingRatio);
     }
 
     private BigDecimal calculatePnl(BigDecimal exitPrice) {

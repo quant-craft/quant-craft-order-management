@@ -57,11 +57,14 @@ public class PositionService {
         position.updatePosition(newSize, newEntryPrice);
     }
 
-
+    /**
+     * 추후 사용자 계정에 cash 업데이트하는 로직이 필요함.
+     */
     private BigDecimal closeOrReducePosition(Position position, Trade trade) {
         BigDecimal remainingSize = trade.getExecutedSize().subtract(position.getSize());
         if (remainingSize.compareTo(BigDecimal.ZERO) <= 0) {
-            position.partialClose(trade.getExecutedSize(), trade.getExecutedPrice());
+            BigDecimal pnl = position.partialClose(trade.getExecutedSize(), trade.getExecutedPrice());
+            // 봇 Cash에 + PNL
             return BigDecimal.ZERO;
         } else {
             position.closePosition(trade.getExecutedPrice());
