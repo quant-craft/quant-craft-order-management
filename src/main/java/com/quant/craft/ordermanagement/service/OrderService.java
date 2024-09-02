@@ -24,6 +24,18 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    @Transactional
+    public Order saveOrder(Order order) {
+        return orderRepository.save(order);
+    }
+
+    public Order createValidateOrder(OrderDto orderDto) {
+        validateOrderDto(orderDto);
+        Order order = createOrder(orderDto);
+        addConditionalOrders(order, orderDto);
+        return order;
+    }
+
     public Order createOrder(OrderDto orderDto) {
         return Order.builder()
                 .orderId(orderDto.getOrderId())
@@ -37,7 +49,7 @@ public class OrderService {
                 .type(OrderType.determineOrderType(orderDto.getLimit(), orderDto.getStop()))
                 .direction(TradeDirection.determineBySize(orderDto.getSize()))
                 .action(OrderAction.OPEN)
-                .status(OrderStatus.NONE)
+                .status(OrderStatus.OPEN)
                 .processingStatus(ProcessingStatus.PENDING)
                 .build();
     }
@@ -53,7 +65,7 @@ public class OrderService {
                 .type(OrderType.MARKET)
                 .direction(position.getDirection())
                 .action(OrderAction.CLOSE)
-                .status(OrderStatus.NONE)
+                .status(OrderStatus.OPEN)
                 .processingStatus(ProcessingStatus.PENDING)
                 .build();
     }
@@ -87,6 +99,7 @@ public class OrderService {
         orderRepository.save(order);
     }
 
+    @Transactional(readOnly = true)
     public List<Order> findOpenOrdersByBotIdAndSymbol(long botId, String symbol) {
         return orderRepository.findOpenOrdersByBotIdAndSymbol(botId, symbol);
     }
