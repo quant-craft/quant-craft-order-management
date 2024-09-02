@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    @Query("SELECT o FROM Order o WHERE o.botId = :botId AND o.symbol = :symbol AND o.status IN (com.quant.craft.ordermanagement.domain.OrderStatus.NONE, com.quant.craft.ordermanagement.domain.OrderStatus.PARTIALLY_FILLED)")
+    @Query("SELECT o FROM Order o WHERE o.botId = :botId AND o.symbol = :symbol AND o.status IN (com.quant.craft.ordermanagement.domain.OrderStatus.OPEN, com.quant.craft.ordermanagement.domain.OrderStatus.PARTIALLY_FILLED)")
     List<Order> findOpenOrdersByBotIdAndSymbol(
             @Param("botId") Long botId,
             @Param("symbol") String symbol);
