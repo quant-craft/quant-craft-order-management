@@ -39,7 +39,6 @@ public class OrderService {
     public Order createOrder(OrderDto orderDto) {
         return Order.builder()
                 .orderId(orderDto.getOrderId())
-                .botId(orderDto.getBotId())
                 .tradingBotId(orderDto.getTradingBotId())
                 .symbol(orderDto.getSymbol())
                 .exchange(orderDto.getExchange().name())
@@ -57,7 +56,6 @@ public class OrderService {
     public Order createCloseOrder(Position position) {
         return Order.builder()
                 .orderId(generateOrderId())
-                .botId(position.getBotId())
                 .tradingBotId(position.getTradingBotId())
                 .symbol(position.getSymbol())
                 .exchange(position.getExchange())
