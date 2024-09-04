@@ -98,8 +98,8 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public List<Order> findOpenOrdersByBotIdAndSymbol(long botId, String symbol) {
-        return orderRepository.findOpenOrdersByBotIdAndSymbol(botId, symbol);
+    public List<Order> findOpenOrdersByBotIdAndSymbol(long tradingBotId, String symbol) {
+        return orderRepository.findOpenOrdersByTradingBotIdAndSymbol(tradingBotId, symbol);
     }
 
 }
