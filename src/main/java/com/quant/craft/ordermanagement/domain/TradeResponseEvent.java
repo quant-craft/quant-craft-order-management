@@ -1,24 +1,11 @@
 package com.quant.craft.ordermanagement.domain;
 
-import org.springframework.context.ApplicationEvent;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-import java.time.Clock;
-
-public class TradeResponseEvent extends ApplicationEvent {
+@Getter
+@AllArgsConstructor
+public class TradeResponseEvent{
     private final Trade trade;
     private final Order order;
-
-    public TradeResponseEvent(Object source, Trade trade, Order order) {
-        super(source);
-        this.trade = trade;
-        this.order = order;
-    }
-
-    public Trade getTrade() {
-        return trade;
-    }
-
-    public Order getOrder() {
-        return order;
-    }
 }
