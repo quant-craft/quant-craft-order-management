@@ -27,7 +27,6 @@ public class Position {
     @Column(unique = true, nullable = false)
     private String positionId;
 
-    private Long botId;
     private Long tradingBotId;
     private String symbol;
     private String exchange;
@@ -38,7 +37,6 @@ public class Position {
     private BigDecimal currentPrice;
     @Transient
     private BigDecimal unrealizedPnl;
-    @Transient
     private BigDecimal realizedPnl;
     @Transient
     private BigDecimal margin;
@@ -59,10 +57,9 @@ public class Position {
     private LocalDateTime closedAt;
 
     @Builder
-    public Position(String positionId, Long botId, Long tradingBotId, String symbol, String exchange,
+    public Position(String positionId, Long tradingBotId, String symbol, String exchange,
                     BigDecimal size, BigDecimal entryPrice, int leverage, PositionStatus status, TradeDirection direction) {
         this.positionId = positionId;
-        this.botId = botId;
         this.tradingBotId = tradingBotId;
         this.symbol = symbol;
         this.exchange = exchange;
@@ -95,13 +92,15 @@ public class Position {
         }
     }
 
-    public void closePosition(BigDecimal exitPrice) {
+    public BigDecimal closePosition(BigDecimal exitPrice) {
         this.currentPrice = exitPrice;
         calculateUnrealizedPnl();
-        this.realizedPnl = this.unrealizedPnl;
+        BigDecimal pnl = this.unrealizedPnl;
+        this.realizedPnl = this.realizedPnl.add(pnl);
         this.unrealizedPnl = BigDecimal.ZERO;
         this.status = PositionStatus.CLOSED;
         this.closedAt = LocalDateTime.now();
+        return pnl;
     }
 
     public BigDecimal partialClose(BigDecimal closeSize, BigDecimal exitPrice) {
