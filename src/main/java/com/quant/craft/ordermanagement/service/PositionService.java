@@ -16,18 +16,17 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PositionService {
     private final PositionRepository positionRepository;
+    private final TradingBotService tradingBotService;
 
-    public List<Position> findExistingPositions(long botId, String symbol) {
-        List<Position> existingPositions = positionRepository.findOpenPositionsByBotIdAndSymbol(
-                botId, symbol);
-        return existingPositions;
+    public List<Position> findExistingPositions(long tradingBotId, String symbol) {
+        return positionRepository.findOpenPositionsByTradingBotIdAndSymbol(
+                tradingBotId, symbol);
     }
 
 
     @Transactional
     public void updatePosition(Trade trade, int leverage) {
-        List<Position> existingPositions = positionRepository.findOpenPositionsByBotIdAndSymbol(
-                trade.getBotId(), trade.getSymbol());
+        List<Position> existingPositions = findExistingPositions(trade.getTradingBotId(), trade.getSymbol());
 
         boolean positionUpdated = false;
 
@@ -57,14 +56,21 @@ public class PositionService {
         position.updatePosition(newSize, newEntryPrice);
     }
 
-
+    /**
+     * TODO
+     * 추후 사용자 계정에 cash 업데이트하는 로직이 필요함.
+     */
     private BigDecimal closeOrReducePosition(Position position, Trade trade) {
         BigDecimal remainingSize = trade.getExecutedSize().subtract(position.getSize());
         if (remainingSize.compareTo(BigDecimal.ZERO) <= 0) {
-            position.partialClose(trade.getExecutedSize(), trade.getExecutedPrice());
+            BigDecimal pnl = position.partialClose(trade.getExecutedSize(), trade.getExecutedPrice());
+
+            tradingBotService.updateCashWithOptimisticLock(trade.getTradingBotId(),pnl);
             return BigDecimal.ZERO;
         } else {
-            position.closePosition(trade.getExecutedPrice());
+            BigDecimal pnl = position.closePosition(trade.getExecutedPrice());
+
+            tradingBotService.updateCashWithOptimisticLock(trade.getTradingBotId(),pnl);
             return remainingSize;
         }
     }
@@ -72,7 +78,6 @@ public class PositionService {
     private void createNewPosition(Trade trade, int leverage, BigDecimal size) {
         Position newPosition = Position.builder()
                 .positionId(generatePositionId())
-                .botId(trade.getBotId())
                 .tradingBotId(trade.getTradingBotId())
                 .symbol(trade.getSymbol())
                 .exchange(trade.getExchange())

@@ -24,10 +24,21 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    @Transactional
+    public Order saveOrder(Order order) {
+        return orderRepository.save(order);
+    }
+
+    public Order createValidateOrder(OrderDto orderDto) {
+        validateOrderDto(orderDto);
+        Order order = createOrder(orderDto);
+        addConditionalOrders(order, orderDto);
+        return order;
+    }
+
     public Order createOrder(OrderDto orderDto) {
         return Order.builder()
                 .orderId(orderDto.getOrderId())
-                .botId(orderDto.getBotId())
                 .tradingBotId(orderDto.getTradingBotId())
                 .symbol(orderDto.getSymbol())
                 .exchange(orderDto.getExchange().name())
@@ -37,7 +48,7 @@ public class OrderService {
                 .type(OrderType.determineOrderType(orderDto.getLimit(), orderDto.getStop()))
                 .direction(TradeDirection.determineBySize(orderDto.getSize()))
                 .action(OrderAction.OPEN)
-                .status(OrderStatus.NONE)
+                .status(OrderStatus.OPEN)
                 .processingStatus(ProcessingStatus.PENDING)
                 .build();
     }
@@ -45,7 +56,6 @@ public class OrderService {
     public Order createCloseOrder(Position position) {
         return Order.builder()
                 .orderId(generateOrderId())
-                .botId(position.getBotId())
                 .tradingBotId(position.getTradingBotId())
                 .symbol(position.getSymbol())
                 .exchange(position.getExchange())
@@ -53,7 +63,7 @@ public class OrderService {
                 .type(OrderType.MARKET)
                 .direction(position.getDirection())
                 .action(OrderAction.CLOSE)
-                .status(OrderStatus.NONE)
+                .status(OrderStatus.OPEN)
                 .processingStatus(ProcessingStatus.PENDING)
                 .build();
     }
@@ -87,8 +97,9 @@ public class OrderService {
         orderRepository.save(order);
     }
 
-    public List<Order> findOpenOrdersByBotIdAndSymbol(long botId, String symbol) {
-        return orderRepository.findOpenOrdersByBotIdAndSymbol(botId, symbol);
+    @Transactional(readOnly = true)
+    public List<Order> findOpenOrdersByBotIdAndSymbol(long tradingBotId, String symbol) {
+        return orderRepository.findOpenOrdersByTradingBotIdAndSymbol(tradingBotId, symbol);
     }
 
 }

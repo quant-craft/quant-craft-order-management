@@ -27,8 +27,6 @@ public class Order {
 
     @Column(unique = true, nullable = false)
     private String orderId;
-
-    private Long botId;
     private Long tradingBotId;
     private String symbol;
     private String exchange;
@@ -66,11 +64,10 @@ public class Order {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Order(String orderId, Long botId, Long tradingBotId, String symbol, String exchange,
+    public Order(String orderId, Long tradingBotId, String symbol, String exchange,
                  BigDecimal size, BigDecimal price, int leverage,
                  OrderType type, OrderStatus status, TradeDirection direction, OrderAction action, ProcessingStatus processingStatus) {
         this.orderId = orderId;
-        this.botId = botId;
         this.tradingBotId = tradingBotId;
         this.symbol = symbol;
         this.exchange = exchange;

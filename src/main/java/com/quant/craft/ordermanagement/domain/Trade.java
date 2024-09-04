@@ -24,8 +24,6 @@ public class Trade {
 
     @Column(unique = true, nullable = false)
     private String tradeId;
-
-    private Long botId;
     private Long tradingBotId;
     private String orderId;
 
@@ -44,11 +42,10 @@ public class Trade {
     private LocalDateTime executedAt;
 
     @Builder
-    public Trade(String tradeId, Long botId, Long tradingBotId, String orderId, String symbol, String exchange,
+    public Trade(String tradeId, Long tradingBotId, String orderId, String symbol, String exchange,
                  BigDecimal executedSize, BigDecimal executedPrice,
                  TradeDirection direction, OrderAction action) {
         this.tradeId = tradeId;
-        this.botId = botId;
         this.tradingBotId = tradingBotId;
         this.orderId = orderId;
         this.symbol = symbol;

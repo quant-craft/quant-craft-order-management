@@ -21,6 +21,7 @@ public class DataLoaderService {
     }
 
     private String getKey(String exchange, String symbol) {
+        if(exchange.equals("simulated")) return "binance:" + symbol;
         return exchange + ":" + symbol;
     }
 

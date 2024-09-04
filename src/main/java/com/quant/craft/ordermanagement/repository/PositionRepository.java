@@ -9,8 +9,8 @@ import java.util.List;
 
 public interface PositionRepository extends JpaRepository<Position,Long> {
 
-    @Query("SELECT p FROM Position p WHERE p.botId = :botId AND p.symbol = :symbol AND p.status = 'OPEN'")
-    List<Position> findOpenPositionsByBotIdAndSymbol(
-            @Param("botId") Long botId,
+    @Query("SELECT p FROM Position p WHERE p.tradingBotId = :tradingBotId AND p.symbol = :symbol AND p.status = 'OPEN'")
+    List<Position> findOpenPositionsByTradingBotIdAndSymbol(
+            @Param("tradingBotId") Long tradingBotId,
             @Param("symbol") String symbol);
 }
