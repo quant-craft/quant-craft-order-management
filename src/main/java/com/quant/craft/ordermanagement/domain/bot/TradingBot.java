@@ -3,9 +3,7 @@ package com.quant.craft.ordermanagement.domain.bot;
 import com.quant.craft.ordermanagement.domain.ExchangeApiKey;
 import com.quant.craft.ordermanagement.domain.User;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
@@ -15,6 +13,8 @@ import java.time.LocalDateTime;
 @Table(name = "trading_bots")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class TradingBot {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
