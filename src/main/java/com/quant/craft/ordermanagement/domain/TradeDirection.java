@@ -12,4 +12,12 @@ public enum TradeDirection {
 
         return (size.compareTo(BigDecimal.ZERO) >= 0) ? LONG : SHORT;
     }
+
+    public static String determineSideByDirection(TradeDirection tradeDirection) {
+        if (tradeDirection == LONG) {
+            return "BUY";
+        }else{
+            return "SELL";
+        }
+    }
 }
