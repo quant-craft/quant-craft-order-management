@@ -1,9 +1,7 @@
 package com.quant.craft.ordermanagement.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -14,6 +12,8 @@ import java.time.LocalDateTime;
 @Table(name = "exchange_api_keys")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@AllArgsConstructor
 public class ExchangeApiKey {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
