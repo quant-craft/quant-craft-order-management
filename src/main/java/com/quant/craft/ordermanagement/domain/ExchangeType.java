@@ -6,5 +6,6 @@ public enum ExchangeType {
     COINBASE,
     KRAKEN,
     BYBIT,
-    SIMULATED
+    SIMULATED,
+    UNKNOWN
 }

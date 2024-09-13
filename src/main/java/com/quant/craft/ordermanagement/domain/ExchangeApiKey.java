@@ -18,7 +18,8 @@ public class ExchangeApiKey {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String exchangeName;
+    @Enumerated(EnumType.STRING)
+    private ExchangeType exchange;
     private String apiKey;
     private String secretKey;
     @CreatedDate
