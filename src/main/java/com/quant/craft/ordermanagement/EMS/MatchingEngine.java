@@ -28,7 +28,7 @@ public class MatchingEngine {
      */
     @Transactional
     public void match(Order order) {
-        OHLCVData latestData = dataLoaderService.getLatestOHLCVData(order.getExchange(), order.getSymbol());
+        OHLCVData latestData = dataLoaderService.getLatestOHLCVData(order.getExchange().name(), order.getSymbol());
         BigDecimal executionPrice = latestData.getClose();
 
         Trade trade = executeTrade(order, order.getSize(), executionPrice);

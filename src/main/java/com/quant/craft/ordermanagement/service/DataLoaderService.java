@@ -16,11 +16,13 @@ public class DataLoaderService {
     }
 
     public OHLCVData getLatestOHLCVData(String exchange, String symbol) {
+        exchange = exchange.toLowerCase();
         String key = getKey(exchange, symbol);
         return latestOHLCVData.get(key);
     }
 
     private String getKey(String exchange, String symbol) {
+        exchange = exchange.toLowerCase();
         if(exchange.equals("simulated")) return "binance:" + symbol;
         return exchange + ":" + symbol;
     }
