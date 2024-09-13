@@ -13,8 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-import java.util.List;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -36,34 +34,11 @@ public class SimulatedTradingService implements TradingService {
     public void processOrder(OrderDto orderDto) {
         Order mainOrder = orderService.createValidateOrder(orderDto);
 
-        handleExclusiveOrders(orderDto);
-
         processAndExecuteOrder(mainOrder, OrderRequestType.OPEN);
 
         log.info("Processed order: {}", mainOrder.getOrderId());
     }
 
-    private void handleExclusiveOrders(OrderDto orderDto) {
-        if (Boolean.TRUE.equals(orderDto.getExclusiveOrders())) {
-            closeExistingPositions(orderDto);
-            cancelExistingOrders(orderDto);
-        }
-    }
-
-    private void cancelExistingOrders(OrderDto orderDto) {
-        List<Order> existingOrders = orderService.findOpenOrdersByBotIdAndSymbol(
-                orderDto.getBotId(), orderDto.getSymbol());
-        existingOrders.forEach(order ->
-                processAndExecuteOrder(order, OrderRequestType.CANCEL)
-        );
-    }
-
-    private void closeExistingPositions(OrderDto orderDto) {
-        Position position = positionService.findExistingPositions(orderDto.getBotId(), orderDto.getSymbol());
-
-        Order closeOrder = orderService.createCloseOrder(position);
-        processAndExecuteOrder(closeOrder, OrderRequestType.OPEN);
-    }
 
     public void processAndExecuteOrder(Order order, OrderRequestType requestType) {
         eventPublisher.publishEvent(new OrderRequestEvent(order, requestType));
@@ -86,7 +61,16 @@ public class SimulatedTradingService implements TradingService {
         Order order = event.getOrder();
         orderService.updateOrderStatus(order, OrderStatus.FILLED, ProcessingStatus.COMPLETED);
 
-        positionService.updatePosition(trade, order.getLeverage());
+        positionService.updatePosition(
+                trade.getTradingBotId(),
+                trade.getSymbol(),
+                trade.getExchange(),
+                trade.getDirection(),
+                trade.getExecutedSize(),
+                trade.getExecutedPrice(),
+                trade.getAction(),
+                order.getLeverage()
+        );
     }
 
     /**
