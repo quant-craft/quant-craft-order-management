@@ -1,7 +1,8 @@
 package com.quant.craft.ordermanagement.service;
 
-import com.quant.craft.ordermanagement.domain.Trade;
 import com.quant.craft.ordermanagement.domain.*;
+import com.quant.craft.ordermanagement.exception.ErrorCode;
+import com.quant.craft.ordermanagement.exception.PositionNotFoundException;
 import com.quant.craft.ordermanagement.repository.PositionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -18,33 +18,28 @@ public class PositionService {
     private final PositionRepository positionRepository;
     private final TradingBotService tradingBotService;
 
-    public List<Position> findExistingPositions(long tradingBotId, String symbol) {
-        return positionRepository.findOpenPositionsByTradingBotIdAndSymbol(
-                tradingBotId, symbol);
+    public Position findExistingPositions(long tradingBotId, String symbol) {
+        return positionRepository.findOpenPositionsByTradingBotIdAndSymbolWithLock(
+                        tradingBotId, symbol, ExchangeType.SIMULATED)
+                .orElseThrow(() -> new PositionNotFoundException(ErrorCode.POSITION_NOT_FOUND,
+                        "TradingBotId: " + tradingBotId + ", Symbol: " + symbol));
     }
 
 
     @Transactional
     public void updatePosition(Trade trade, int leverage) {
-        List<Position> existingPositions = findExistingPositions(trade.getTradingBotId(), trade.getSymbol());
+        Position position = findExistingPositions(trade.getTradingBotId(), trade.getSymbol());
 
-        boolean positionUpdated = false;
-
-        for (Position position : existingPositions) {
-            if (position.getDirection() == trade.getDirection()) {
-                updateExistingPosition(position, trade);
-                positionUpdated = true;
-                break;
-            } else {
-                BigDecimal remainingSize = closeOrReducePosition(position, trade);
-                if (remainingSize.compareTo(BigDecimal.ZERO) > 0) {
-                    createNewPosition(trade, leverage, remainingSize);
-                }
-                positionUpdated = true;
+        if (position.getDirection() == trade.getDirection()) {
+            updateExistingPosition(position, trade);
+        } else {
+            BigDecimal remainingSize = closeOrReducePosition(position, trade);
+            if (remainingSize.compareTo(BigDecimal.ZERO) > 0) {
+                createNewPosition(trade, leverage, remainingSize);
             }
         }
 
-        if (!positionUpdated && trade.getAction() == OrderAction.OPEN) {
+        if (trade.getAction() == OrderAction.OPEN) {
             createNewPosition(trade, leverage, trade.getExecutedSize());
         }
     }
@@ -56,21 +51,17 @@ public class PositionService {
         position.updatePosition(newSize, newEntryPrice);
     }
 
-    /**
-     * TODO
-     * 추후 사용자 계정에 cash 업데이트하는 로직이 필요함.
-     */
     private BigDecimal closeOrReducePosition(Position position, Trade trade) {
         BigDecimal remainingSize = trade.getExecutedSize().subtract(position.getSize());
         if (remainingSize.compareTo(BigDecimal.ZERO) <= 0) {
             BigDecimal pnl = position.partialClose(trade.getExecutedSize(), trade.getExecutedPrice());
 
-            tradingBotService.updateCashWithOptimisticLock(trade.getTradingBotId(),pnl);
+            tradingBotService.updateCashWithOptimisticLock(trade.getTradingBotId(), pnl);
             return BigDecimal.ZERO;
         } else {
             BigDecimal pnl = position.closePosition(trade.getExecutedPrice());
 
-            tradingBotService.updateCashWithOptimisticLock(trade.getTradingBotId(),pnl);
+            tradingBotService.updateCashWithOptimisticLock(trade.getTradingBotId(), pnl);
             return remainingSize;
         }
     }
