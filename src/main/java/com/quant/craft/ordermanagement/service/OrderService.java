@@ -2,6 +2,8 @@ package com.quant.craft.ordermanagement.service;
 
 import com.quant.craft.ordermanagement.domain.*;
 import com.quant.craft.ordermanagement.dto.OrderDto;
+import com.quant.craft.ordermanagement.exception.ErrorCode;
+import com.quant.craft.ordermanagement.exception.OrderNotFoundException;
 import com.quant.craft.ordermanagement.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -41,7 +43,7 @@ public class OrderService {
                 .orderId(orderDto.getOrderId())
                 .tradingBotId(orderDto.getTradingBotId())
                 .symbol(orderDto.getSymbol())
-                .exchange(orderDto.getExchange().name())
+                .exchange(orderDto.getExchange())
                 .size(orderDto.getSize().abs())
                 .price(orderDto.getLimit())
                 .leverage(orderDto.getLeverage())
@@ -102,4 +104,9 @@ public class OrderService {
         return orderRepository.findOpenOrdersByTradingBotIdAndSymbol(tradingBotId, symbol);
     }
 
+    @Transactional(readOnly = true)
+    public Order findOrderByClientOrderId(String clientOrderId) {
+        return orderRepository.findByClientOrderIdWithLock(clientOrderId)
+                .orElseThrow(() -> new OrderNotFoundException(ErrorCode.ORDER_NOT_FOUND_BY_CLIENT_ORDER_ID, "ClientOrderId : " + clientOrderId));
+    }
 }
