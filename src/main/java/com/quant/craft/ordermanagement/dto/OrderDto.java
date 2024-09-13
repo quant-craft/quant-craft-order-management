@@ -1,6 +1,7 @@
 package com.quant.craft.ordermanagement.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.quant.craft.ordermanagement.domain.ExchangeType;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -21,7 +22,7 @@ public class OrderDto {
     @NotNull
     private String symbol;
     @NotNull
-    private Exchange exchange;
+    private ExchangeType exchange;
     @NotNull
     private BigDecimal size;
     private BigDecimal limit;
@@ -33,13 +34,5 @@ public class OrderDto {
     private Boolean exclusiveOrders;
     @JsonProperty("hedge_mode")
     private Boolean hedgeMode;
-
-    // 추후 변경 Config에서 지원하는 Exchange 가져오도록.
-    public enum Exchange {
-        binance,
-        coinbase,
-        kraken,
-        simulated,
-    }
 }
 
