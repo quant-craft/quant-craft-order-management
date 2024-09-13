@@ -28,7 +28,8 @@ public class Trade {
     private String orderId;
 
     private String symbol;
-    private String exchange;
+    @Enumerated(EnumType.STRING)
+    private ExchangeType exchange;
     private BigDecimal executedSize;
     private BigDecimal executedPrice;
 
@@ -42,7 +43,7 @@ public class Trade {
     private LocalDateTime executedAt;
 
     @Builder
-    public Trade(String tradeId, Long tradingBotId, String orderId, String symbol, String exchange,
+    public Trade(String tradeId, Long tradingBotId, String orderId, String symbol, ExchangeType exchange,
                  BigDecimal executedSize, BigDecimal executedPrice,
                  TradeDirection direction, OrderAction action) {
         this.tradeId = tradeId;

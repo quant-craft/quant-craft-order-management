@@ -29,7 +29,8 @@ public class Position {
 
     private Long tradingBotId;
     private String symbol;
-    private String exchange;
+    @Enumerated(EnumType.STRING)
+    private ExchangeType exchange;
     private BigDecimal size;
     private BigDecimal entryPrice;
 
@@ -57,7 +58,7 @@ public class Position {
     private LocalDateTime closedAt;
 
     @Builder
-    public Position(String positionId, Long tradingBotId, String symbol, String exchange,
+    public Position(String positionId, Long tradingBotId, String symbol, ExchangeType exchange,
                     BigDecimal size, BigDecimal entryPrice, int leverage, PositionStatus status, TradeDirection direction) {
         this.positionId = positionId;
         this.tradingBotId = tradingBotId;
