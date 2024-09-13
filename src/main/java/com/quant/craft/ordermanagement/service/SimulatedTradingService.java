@@ -1,13 +1,12 @@
 package com.quant.craft.ordermanagement.service;
 
-import com.quant.craft.ordermanagement.EMS.*;
+import com.quant.craft.ordermanagement.EMS.OrderRequestEvent;
+import com.quant.craft.ordermanagement.EMS.OrderRequestType;
 import com.quant.craft.ordermanagement.domain.*;
 import com.quant.craft.ordermanagement.dto.OrderDto;
-import com.quant.craft.ordermanagement.repository.TradeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +25,7 @@ public class SimulatedTradingService implements TradingService {
     private final ApplicationEventPublisher eventPublisher;
 
     /**
-     *  TODO
+     * TODO
      *  현재 Order를 각각 따로 보내고있지만, 해당 요청이 오는 순간 모든 Order를 정상적으로 커밋해야함.
      *  즉, 1 Consume -> N Produce 를 원자적으로 수행해야할 필요가 있음.
      *  현실적으로 가능할지는 모름..
@@ -60,12 +59,10 @@ public class SimulatedTradingService implements TradingService {
     }
 
     private void closeExistingPositions(OrderDto orderDto) {
-        List<Position> existingPositions = positionService.findExistingPositions(orderDto.getBotId(), orderDto.getSymbol());
+        Position position = positionService.findExistingPositions(orderDto.getBotId(), orderDto.getSymbol());
 
-        for (Position position : existingPositions) {
-            Order closeOrder = orderService.createCloseOrder(position);
-            processAndExecuteOrder(closeOrder, OrderRequestType.OPEN);
-        }
+        Order closeOrder = orderService.createCloseOrder(position);
+        processAndExecuteOrder(closeOrder, OrderRequestType.OPEN);
     }
 
     public void processAndExecuteOrder(Order order, OrderRequestType requestType) {
@@ -93,7 +90,7 @@ public class SimulatedTradingService implements TradingService {
     }
 
     /**
-     *  Event를 발생시키는 주체가 트랜잭션이 완료되고 나서 수행된다.
+     * Event를 발생시키는 주체가 트랜잭션이 완료되고 나서 수행된다.
      */
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -101,13 +98,13 @@ public class SimulatedTradingService implements TradingService {
         Order order = event.getOrder();
         OrderRequestType type = event.getType();
 
-        if(type == OrderRequestType.OPEN){
+        if (type == OrderRequestType.OPEN) {
             order.setProcessingStatus(ProcessingStatus.COMPLETED);
             orderService.saveOrder(order);
         }
 
         if (type == OrderRequestType.CANCEL) {
-            orderService.updateOrderStatus(order,OrderStatus.CANCELED,ProcessingStatus.COMPLETED);
+            orderService.updateOrderStatus(order, OrderStatus.CANCELED, ProcessingStatus.COMPLETED);
         }
 
         /**
