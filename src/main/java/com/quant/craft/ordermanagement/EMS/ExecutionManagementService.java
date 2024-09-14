@@ -1,7 +1,7 @@
 package com.quant.craft.ordermanagement.EMS;
 
-import com.quant.craft.ordermanagement.domain.Order;
-import com.quant.craft.ordermanagement.domain.OrderResponseEvent;
+import com.quant.craft.ordermanagement.domain.order.Order;
+import com.quant.craft.ordermanagement.domain.order.OrderResponseEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,7 @@
 package com.quant.craft.ordermanagement.domain.bot;
 
-import com.quant.craft.ordermanagement.domain.ExchangeApiKey;
-import com.quant.craft.ordermanagement.domain.User;
+import com.quant.craft.ordermanagement.domain.exchange.ExchangeApiKey;
+import com.quant.craft.ordermanagement.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;

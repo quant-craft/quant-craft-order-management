@@ -1,5 +1,9 @@
-package com.quant.craft.ordermanagement.domain;
+package com.quant.craft.ordermanagement.domain.order;
 
+import com.quant.craft.ordermanagement.domain.enums.PositionSide;
+import com.quant.craft.ordermanagement.domain.enums.ProcessingStatus;
+import com.quant.craft.ordermanagement.domain.enums.Side;
+import com.quant.craft.ordermanagement.domain.exchange.ExchangeType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -47,9 +51,13 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderType type;
 
-    // LONG , SHORT
+    // BUY, SELL
     @Enumerated(EnumType.STRING)
-    private TradeDirection direction;
+    private Side side;
+
+    // LONG, SHORT, BOTH - Default
+    @Enumerated(EnumType.STRING)
+    private PositionSide positionSide;
 
     // OPEN , CLOSE
     @Enumerated(EnumType.STRING)
@@ -74,7 +82,7 @@ public class Order {
     @Builder
     public Order(String orderId,String clientOrderId, Long tradingBotId, String symbol, ExchangeType exchange,
                  BigDecimal size, BigDecimal price, int leverage,
-                 OrderType type, OrderStatus status, TradeDirection direction, OrderAction action, ProcessingStatus processingStatus) {
+                 OrderType type, OrderStatus status, Side side, PositionSide positionSide, OrderAction action, ProcessingStatus processingStatus) {
         this.orderId = orderId;
         this.clientOrderId = clientOrderId;
         this.tradingBotId = tradingBotId;
@@ -84,7 +92,8 @@ public class Order {
         this.price = price;
         this.leverage = leverage;
         this.type = type;
-        this.direction = direction;
+        this.side = side;
+        this.positionSide = positionSide;
         this.status = status;
         this.action = action;
         this.processingStatus = processingStatus;

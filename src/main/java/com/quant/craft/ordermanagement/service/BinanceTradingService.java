@@ -1,6 +1,13 @@
 package com.quant.craft.ordermanagement.service;
 
-import com.quant.craft.ordermanagement.domain.*;
+import com.quant.craft.ordermanagement.domain.enums.ProcessingStatus;
+import com.quant.craft.ordermanagement.domain.enums.Side;
+import com.quant.craft.ordermanagement.domain.exchange.ExchangeApiKey;
+import com.quant.craft.ordermanagement.domain.exchange.ExchangeType;
+import com.quant.craft.ordermanagement.domain.order.Order;
+import com.quant.craft.ordermanagement.domain.order.OrderAction;
+import com.quant.craft.ordermanagement.domain.order.OrderStatus;
+import com.quant.craft.ordermanagement.domain.trade.Trade;
 import com.quant.craft.ordermanagement.dto.OrderDto;
 import com.quant.craft.ordermanagement.dto.binance.AccountUpdateEvent;
 import com.quant.craft.ordermanagement.dto.binance.OrderTradeUpdateEvent;
@@ -101,7 +108,7 @@ public class BinanceTradingService implements TradingService {
                 order.getTradingBotId(),
                 event.getSymbol(),
                 ExchangeType.BINANCE,
-                event.getSide().equals("BUY") ? TradeDirection.LONG : TradeDirection.SHORT,
+                Side.fromString(event.getSide()),
                 event.getQuantity(),
                 event.getLastFilledPrice(),
                 OrderAction.OPEN,
@@ -118,7 +125,7 @@ public class BinanceTradingService implements TradingService {
                 .exchange(ExchangeType.BINANCE)
                 .executedSize(event.getQuantity())
                 .executedPrice(event.getLastFilledPrice())
-                .direction(event.getSide().equals("BUY") ? TradeDirection.LONG : TradeDirection.SHORT)
+                .side(Side.fromString(event.getSide()))
                 .action(OrderAction.OPEN)
                 .build();
     }
@@ -138,7 +145,7 @@ public class BinanceTradingService implements TradingService {
     private OrderStatus mapBinanceStatusToOrderStatus(String binanceStatus) {
         switch (binanceStatus) {
             case "NEW":
-                return OrderStatus.OPEN;
+                return OrderStatus.NEW;
             case "PARTIALLY_FILLED":
                 return OrderStatus.PARTIALLY_FILLED;
             case "FILLED":

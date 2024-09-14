@@ -1,8 +1,8 @@
 package com.quant.craft.ordermanagement.EMS;
 
-import com.quant.craft.ordermanagement.domain.Order;
-import com.quant.craft.ordermanagement.domain.Trade;
-import com.quant.craft.ordermanagement.domain.TradeResponseEvent;
+import com.quant.craft.ordermanagement.domain.order.Order;
+import com.quant.craft.ordermanagement.domain.trade.Trade;
+import com.quant.craft.ordermanagement.domain.trade.TradeResponseEvent;
 import com.quant.craft.ordermanagement.dto.OHLCVData;
 import com.quant.craft.ordermanagement.repository.TradeRepository;
 import com.quant.craft.ordermanagement.service.DataLoaderService;
@@ -46,7 +46,7 @@ public class MatchingEngine {
                 .exchange(order.getExchange())
                 .executedSize(size)
                 .executedPrice(price)
-                .direction(order.getDirection())
+                .side(order.getSide())
                 .action(order.getAction())
                 .build();
     }

@@ -1,4 +1,4 @@
-package com.quant.craft.ordermanagement.domain;
+package com.quant.craft.ordermanagement.domain.enums;
 
 public enum ProcessingStatus {
     PENDING, //대기중

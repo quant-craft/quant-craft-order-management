@@ -1,4 +1,4 @@
-package com.quant.craft.ordermanagement.domain;
+package com.quant.craft.ordermanagement.domain.order;
 
 import com.quant.craft.ordermanagement.EMS.OrderRequestType;
 import org.springframework.context.ApplicationEvent;

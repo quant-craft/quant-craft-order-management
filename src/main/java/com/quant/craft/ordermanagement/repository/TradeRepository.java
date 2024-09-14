@@ -1,6 +1,6 @@
 package com.quant.craft.ordermanagement.repository;
 
-import com.quant.craft.ordermanagement.domain.Trade;
+import com.quant.craft.ordermanagement.domain.trade.Trade;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

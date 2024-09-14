@@ -2,7 +2,12 @@ package com.quant.craft.ordermanagement.service;
 
 import com.quant.craft.ordermanagement.EMS.OrderRequestEvent;
 import com.quant.craft.ordermanagement.EMS.OrderRequestType;
-import com.quant.craft.ordermanagement.domain.*;
+import com.quant.craft.ordermanagement.domain.enums.ProcessingStatus;
+import com.quant.craft.ordermanagement.domain.order.Order;
+import com.quant.craft.ordermanagement.domain.order.OrderResponseEvent;
+import com.quant.craft.ordermanagement.domain.order.OrderStatus;
+import com.quant.craft.ordermanagement.domain.trade.Trade;
+import com.quant.craft.ordermanagement.domain.trade.TradeResponseEvent;
 import com.quant.craft.ordermanagement.dto.OrderDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -65,7 +70,7 @@ public class SimulatedTradingService implements TradingService {
                 trade.getTradingBotId(),
                 trade.getSymbol(),
                 trade.getExchange(),
-                trade.getDirection(),
+                trade.getSide(),
                 trade.getExecutedSize(),
                 trade.getExecutedPrice(),
                 trade.getAction(),
