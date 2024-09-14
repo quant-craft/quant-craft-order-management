@@ -1,9 +1,9 @@
 package com.quant.craft.ordermanagement.controller;
 
-import com.quant.craft.ordermanagement.domain.Order;
-import com.quant.craft.ordermanagement.domain.Position;
+import com.quant.craft.ordermanagement.domain.order.Order;
+import com.quant.craft.ordermanagement.domain.position.Position;
 import com.quant.craft.ordermanagement.domain.ProcessingStatus;
-import com.quant.craft.ordermanagement.domain.Trade;
+import com.quant.craft.ordermanagement.domain.trade.Trade;
 import com.quant.craft.ordermanagement.service.OrderService;
 import com.quant.craft.ordermanagement.service.PositionService;
 import com.quant.craft.ordermanagement.service.TradeService;
