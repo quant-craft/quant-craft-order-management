@@ -101,7 +101,7 @@ public class BinanceTradingService implements TradingService {
                 order.getTradingBotId(),
                 event.getSymbol(),
                 ExchangeType.BINANCE,
-                event.getSide().equals("BUY") ? TradeDirection.LONG : TradeDirection.SHORT,
+                Side.fromString(event.getSide()),
                 event.getQuantity(),
                 event.getLastFilledPrice(),
                 OrderAction.OPEN,
@@ -118,7 +118,7 @@ public class BinanceTradingService implements TradingService {
                 .exchange(ExchangeType.BINANCE)
                 .executedSize(event.getQuantity())
                 .executedPrice(event.getLastFilledPrice())
-                .direction(event.getSide().equals("BUY") ? TradeDirection.LONG : TradeDirection.SHORT)
+                .side(Side.fromString(event.getSide()))
                 .action(OrderAction.OPEN)
                 .build();
     }
@@ -138,7 +138,7 @@ public class BinanceTradingService implements TradingService {
     private OrderStatus mapBinanceStatusToOrderStatus(String binanceStatus) {
         switch (binanceStatus) {
             case "NEW":
-                return OrderStatus.OPEN;
+                return OrderStatus.NEW;
             case "PARTIALLY_FILLED":
                 return OrderStatus.PARTIALLY_FILLED;
             case "FILLED":

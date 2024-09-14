@@ -46,7 +46,7 @@ public class MatchingEngine {
                 .exchange(order.getExchange())
                 .executedSize(size)
                 .executedPrice(price)
-                .direction(order.getDirection())
+                .side(order.getSide())
                 .action(order.getAction())
                 .build();
     }

@@ -30,6 +30,10 @@ public class OrderService {
         return order;
     }
 
+    /**
+     * 현재는 positionSide 가 무조건 BOTH가 아님.
+     * 추후 Hedging mode 추가할 시 수정해야함.
+     */
     public Order createOrder(OrderDto orderDto) {
         return Order.builder()
                 .orderId(orderDto.getOrderId())
@@ -40,31 +44,14 @@ public class OrderService {
                 .price(orderDto.getLimit())
                 .leverage(orderDto.getLeverage())
                 .type(OrderType.determineOrderType(orderDto.getLimit(), orderDto.getStop()))
-                .direction(TradeDirection.determineBySize(orderDto.getSize()))
+                .side(Side.determineBySize(orderDto.getSize()))
+                .positionSide(Side.determineBySize(orderDto.getSize()).toPositionSide())
                 .action(OrderAction.OPEN)
-                .status(OrderStatus.OPEN)
+                .status(OrderStatus.NEW)
                 .processingStatus(ProcessingStatus.PENDING)
                 .build();
     }
 
-    public Order createCloseOrder(Position position) {
-        return Order.builder()
-                .orderId(generateOrderId())
-                .tradingBotId(position.getTradingBotId())
-                .symbol(position.getSymbol())
-                .exchange(position.getExchange())
-                .size(position.getSize())
-                .type(OrderType.MARKET)
-                .direction(position.getDirection())
-                .action(OrderAction.CLOSE)
-                .status(OrderStatus.OPEN)
-                .processingStatus(ProcessingStatus.PENDING)
-                .build();
-    }
-
-    private String generateOrderId() {
-        return UUID.randomUUID().toString();
-    }
 
     private void validateOrderDto(OrderDto orderDto) {
         if (orderDto.getSize().compareTo(BigDecimal.ZERO) == 0 || orderDto.getSize() == null) {

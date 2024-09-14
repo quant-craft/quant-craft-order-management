@@ -31,22 +31,23 @@ public class PositionService {
 
     @Transactional
     public void updatePosition(long tradingBotId, String symbol, ExchangeType exchangeType,
-                               TradeDirection direction, BigDecimal size, BigDecimal price,
+                               Side side, BigDecimal size, BigDecimal price,
                                OrderAction action, int leverage) {
         Optional<Position> positionOptional = findExistingPosition(tradingBotId, symbol, exchangeType);
+        PositionSide positionSide = side.toPositionSide();
 
         if (positionOptional.isPresent()) {
             Position position = positionOptional.get();
-            if (position.getDirection() == direction) {
+            if (position.getPositionSide() == positionSide) {
                 updateExistingPosition(position, size, price);
             } else {
                 BigDecimal remainingSize = closeOrReducePosition(position, size, price);
                 if (remainingSize.compareTo(BigDecimal.ZERO) > 0) {
-                    createNewPosition(tradingBotId, symbol, exchangeType, direction, remainingSize, price, leverage);
+                    createNewPosition(tradingBotId, symbol, exchangeType, positionSide, remainingSize, price, leverage);
                 }
             }
         } else if (action == OrderAction.OPEN) {
-            createNewPosition(tradingBotId, symbol, exchangeType, direction, size, price, leverage);
+            createNewPosition(tradingBotId, symbol, exchangeType, positionSide, size, price, leverage);
         }
     }
 
@@ -72,7 +73,7 @@ public class PositionService {
     }
 
     private void createNewPosition(long tradingBotId, String symbol, ExchangeType exchangeType,
-                                   TradeDirection direction, BigDecimal size, BigDecimal price, int leverage) {
+                                   PositionSide positionSide, BigDecimal size, BigDecimal price, int leverage) {
         Position newPosition = Position.builder()
                 .positionId(generatePositionId())
                 .tradingBotId(tradingBotId)
@@ -81,7 +82,7 @@ public class PositionService {
                 .size(size)
                 .entryPrice(price)
                 .leverage(leverage)
-                .direction(direction)
+                .positionSide(positionSide)
                 .status(PositionStatus.OPEN)
                 .build();
         positionRepository.save(newPosition);

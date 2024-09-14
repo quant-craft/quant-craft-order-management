@@ -65,7 +65,7 @@ public class SimulatedTradingService implements TradingService {
                 trade.getTradingBotId(),
                 trade.getSymbol(),
                 trade.getExchange(),
-                trade.getDirection(),
+                trade.getSide(),
                 trade.getExecutedSize(),
                 trade.getExecutedPrice(),
                 trade.getAction(),
