@@ -1,6 +1,6 @@
 package com.quant.craft.ordermanagement.domain.order;
 
-import com.quant.craft.ordermanagement.domain.ProcessingStatus;
+import com.quant.craft.ordermanagement.domain.enums.ProcessingStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

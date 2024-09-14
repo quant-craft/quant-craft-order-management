@@ -1,6 +1,4 @@
-package com.quant.craft.ordermanagement.domain;
-
-import com.quant.craft.ordermanagement.domain.enums.PositionSide;
+package com.quant.craft.ordermanagement.domain.enums;
 
 import java.math.BigDecimal;
 

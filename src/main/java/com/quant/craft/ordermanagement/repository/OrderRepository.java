@@ -1,7 +1,7 @@
 package com.quant.craft.ordermanagement.repository;
 
 import com.quant.craft.ordermanagement.domain.order.Order;
-import com.quant.craft.ordermanagement.domain.ProcessingStatus;
+import com.quant.craft.ordermanagement.domain.enums.ProcessingStatus;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
