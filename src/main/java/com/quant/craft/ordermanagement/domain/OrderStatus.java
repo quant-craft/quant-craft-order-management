@@ -1,7 +1,7 @@
 package com.quant.craft.ordermanagement.domain;
 
 public enum OrderStatus {
-    OPEN,
+    NEW,
     PARTIALLY_FILLED,
     FILLED,
     CANCELED,
