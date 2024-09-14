@@ -1,5 +1,6 @@
 package com.quant.craft.ordermanagement.service;
 
+import com.quant.craft.ordermanagement.common.exception.ExchangeException;
 import com.quant.craft.ordermanagement.domain.enums.ProcessingStatus;
 import com.quant.craft.ordermanagement.domain.enums.Side;
 import com.quant.craft.ordermanagement.domain.exchange.ExchangeApiKey;
@@ -12,10 +13,9 @@ import com.quant.craft.ordermanagement.dto.OrderDto;
 import com.quant.craft.ordermanagement.dto.binance.AccountUpdateEvent;
 import com.quant.craft.ordermanagement.dto.binance.OrderTradeUpdateEvent;
 import com.quant.craft.ordermanagement.dto.binance.TradeLiteEvent;
-import com.quant.craft.ordermanagement.common.exception.BinanceException;
 import com.quant.craft.ordermanagement.common.exception.ErrorCode;
 import com.quant.craft.ordermanagement.repository.TradeRepository;
-import com.quant.craft.ordermanagement.socket.BinanceWebSocketClient;
+import com.quant.craft.ordermanagement.infrastructure.websocket.BinanceWebSocketClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -45,7 +45,6 @@ public class BinanceTradingService implements TradingService {
     @Transactional
     @Override
     public void processOrder(OrderDto orderDto) {
-        log.info("BinanceTradingService - ProcessOrder");
         ExchangeApiKey apiKey = apiKeyService.getApiKey(orderDto.getTradingBotId());
         validateApiCredentials(apiKey);
 
@@ -56,8 +55,7 @@ public class BinanceTradingService implements TradingService {
         try {
             webSocketClient.placeOrder(apiKey.getApiKey(), apiKey.getSecretKey(), validateOrder, orderDto.getOrderId());
         } catch (Exception e) {
-            log.error("Error processing order", e);
-            throw new BinanceException(ErrorCode.BINANCE_ORDER_PROCESSING_ERROR, e.getMessage());
+            throw new ExchangeException(ExchangeType.BINANCE, ErrorCode.BINANCE_ORDER_PROCESSING_ERROR, e.getMessage());
         }
     }
 
@@ -91,7 +89,7 @@ public class BinanceTradingService implements TradingService {
 
     private void validateApiCredentials(ExchangeApiKey apiKey) {
         if (apiKey == null || apiKey.getApiKey() == null || apiKey.getSecretKey() == null) {
-            throw new BinanceException(ErrorCode.BINANCE_INVALID_API_CREDENTIALS, "API key and secret key are required");
+            throw new ExchangeException(ExchangeType.BINANCE, ErrorCode.BINANCE_INVALID_API_CREDENTIALS);
         }
     }
 
@@ -155,7 +153,7 @@ public class BinanceTradingService implements TradingService {
             case "EXPIRED":
                 return OrderStatus.EXPIRED;
             default:
-                throw new BinanceException(ErrorCode.BINANCE_ORDER_PROCESSING_ERROR, "Unknown Binance order status: " + binanceStatus);
+                throw new ExchangeException(ExchangeType.BINANCE, ErrorCode.BINANCE_ORDER_PROCESSING_ERROR, "Unknown Binance order status: " + binanceStatus);
         }
     }
 
@@ -179,7 +177,7 @@ public class BinanceTradingService implements TradingService {
             case "AMENDMENT":
                 return ProcessingStatus.SUBMITTED;
             default:
-                throw new BinanceException(ErrorCode.BINANCE_ORDER_PROCESSING_ERROR, "Unknown Binance execution type: " + executionType);
+                throw new ExchangeException(ExchangeType.BINANCE, ErrorCode.BINANCE_ORDER_PROCESSING_ERROR, "Unknown Binance execution type: " + executionType);
         }
     }
 }
