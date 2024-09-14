@@ -30,7 +30,9 @@ public class Trade {
     private String symbol;
     @Enumerated(EnumType.STRING)
     private ExchangeType exchange;
+    @Column(precision = 30, scale = 8)
     private BigDecimal executedSize;
+    @Column(precision = 30, scale = 8)
     private BigDecimal executedPrice;
 
     @Enumerated(EnumType.STRING)

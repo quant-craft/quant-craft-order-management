@@ -31,13 +31,16 @@ public class Position {
     private String symbol;
     @Enumerated(EnumType.STRING)
     private ExchangeType exchange;
+    @Column(precision = 30, scale = 8)
     private BigDecimal size;
+    @Column(precision = 30, scale = 8)
     private BigDecimal entryPrice;
 
     @Transient
     private BigDecimal currentPrice;
     @Transient
     private BigDecimal unrealizedPnl;
+    @Column(precision = 30, scale = 8)
     private BigDecimal realizedPnl;
     @Transient
     private BigDecimal margin;
@@ -56,6 +59,9 @@ public class Position {
     private LocalDateTime updatedAt;
 
     private LocalDateTime closedAt;
+
+    @Version
+    private Long version;
 
     @Builder
     public Position(String positionId, Long tradingBotId, String symbol, ExchangeType exchange,

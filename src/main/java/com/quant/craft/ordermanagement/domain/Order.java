@@ -33,7 +33,9 @@ public class Order {
     private String symbol;
     @Enumerated(EnumType.STRING)
     private ExchangeType exchange;
+    @Column(precision = 30, scale = 8)
     private BigDecimal size;
+    @Column(precision = 30, scale = 8)
     private BigDecimal price;
     private int leverage;
 
