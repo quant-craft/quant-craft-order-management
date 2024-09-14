@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Trading View</title>
+  <link rel="stylesheet" th:href="@{/css/trading.css}">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+<div class="trading-container">
+  <div class="tab">
+    <button class="tablinks active" onclick="openTab(event, 'Positions')">Positions</button>
+    <button class="tablinks" onclick="openTab(event, 'OpenOrders')">Open Orders</button>
+    <button class="tablinks" onclick="openTab(event, 'OrderHistory')">Order History</button>
+    <button class="tablinks" onclick="openTab(event, 'TradeHistory')">Trade History</button>
+  </div>
+
+  <div id="Positions" class="tabcontent" style="display:block;">
+    <table id="positionsTable">
+      <thead>
+      <tr>
+        <th>Symbol</th>
+        <th>Size</th>
+        <th>Entry Price</th>
+        <th>Mark Price</th>
+        <th>Margin</th>
+        <th>PNL(ROI%)</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="position : ${positions}" th:id="'position-' + ${position.id}">
+        <td>
+          <span class="symbol" th:text="${position.symbol}"></span>
+          <span class="leverage" th:text="${position.leverage} + 'x'"></span>
+        </td>
+        <td th:text="${#numbers.formatDecimal(position.size, 1, 8)}"></td>
+        <td th:text="${#numbers.formatDecimal(position.entryPrice, 1, 8)}"></td>
+        <td th:text="${#numbers.formatDecimal(position.currentPrice, 1, 8)}"></td>
+        <td th:text="${#numbers.formatDecimal(position.margin, 1, 8) + ' USDT'}"></td>
+        <td th:class="${position.unrealizedPnl != null and position.unrealizedPnl.compareTo(T(java.math.BigDecimal).ZERO) >= 0 ? 'positive' : 'negative'}">
+          <span th:text="${position.unrealizedPnl != null ? #numbers.formatDecimal(position.unrealizedPnl, 1, 2) + ' USDT' : 'N/A'}"></span>
+          <span th:if="${position.unrealizedPnl != null and position.margin != null}"
+                th:text="'(' + ${#numbers.formatDecimal(position.unrealizedPnl.divide(position.margin, 4, T(java.math.RoundingMode).HALF_UP).multiply(new java.math.BigDecimal('100')), 1, 2)} + '%)'"></span>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="OpenOrders" class="tabcontent">
+    <table id="openOrdersTable">
+      <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Symbol</th>
+        <th>Type</th>
+        <th>Side</th>
+        <th>Price</th>
+        <th>Size</th>
+        <th>Status</th>
+        <th>Created At</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="order : ${openOrders}" th:id="'order-' + ${order.id}">
+        <td th:text="${order.orderId}"></td>
+        <td th:text="${order.symbol}"></td>
+        <td th:text="${order.type}"></td>
+        <td th:text="${order.direction}"></td>
+        <td th:text="${#numbers.formatDecimal(order.price, 1, 8)}"></td>
+        <td th:text="${#numbers.formatDecimal(order.size, 1, 8)}"></td>
+        <td th:text="${order.status}"></td>
+        <td th:text="${#temporals.format(order.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="OrderHistory" class="tabcontent">
+    <table id="orderHistoryTable">
+      <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Symbol</th>
+        <th>Type</th>
+        <th>Side</th>
+        <th>Price</th>
+        <th>Size</th>
+        <th>Status</th>
+        <th>Created At</th>
+        <th>Updated At</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="order : ${orderHistory}" th:id="'orderHistory-' + ${order.id}">
+        <td th:text="${order.orderId}"></td>
+        <td th:text="${order.symbol}"></td>
+        <td th:text="${order.type}"></td>
+        <td th:text="${order.direction}"></td>
+        <td th:text="${#numbers.formatDecimal(order.price, 1, 8)}"></td>
+        <td th:text="${#numbers.formatDecimal(order.size, 1, 8)}"></td>
+        <td th:text="${order.status}"></td>
+        <td th:text="${#temporals.format(order.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
+        <td th:text="${#temporals.format(order.updatedAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="TradeHistory" class="tabcontent">
+    <table id="tradeHistoryTable">
+      <thead>
+      <tr>
+        <th>Trade ID</th>
+        <th>Order ID</th>
+        <th>Symbol</th>
+        <th>Side</th>
+        <th>Price</th>
+        <th>Size</th>
+        <th>Action</th>
+        <th>Executed At</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="trade : ${tradeHistory}" th:id="'trade-' + ${trade.id}">
+        <td th:text="${trade.tradeId}"></td>
+        <td th:text="${trade.orderId}"></td>
+        <td th:text="${trade.symbol}"></td>
+        <td th:text="${trade.direction}"></td>
+        <td th:text="${#numbers.formatDecimal(trade.executedPrice, 1, 8)}"></td>
+        <td th:text="${#numbers.formatDecimal(trade.executedSize, 1, 8)}"></td>
+        <td th:text="${trade.action}"></td>
+        <td th:text="${#temporals.format(trade.executedAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script th:inline="javascript">
+  function openTab(evt, tabName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
+  }
+
+  var stompClient = null;
+
+  function connect() {
+    var socket = new SockJS('/ws');
+    stompClient = Stomp.over(socket);
+    stompClient.connect({}, function(frame) {
+      console.log('Connected: ' + frame);
+      stompClient.subscribe('/topic/positions', function(message) {
+        updatePosition(JSON.parse(message.body));
+      });
+      // Add more subscriptions for orders and trades if needed
+    });
+  }
+
+  function updatePosition(position) {
+    var row = document.getElementById('position-' + position.id);
+    if (row) {
+      row.cells[0].innerHTML = '<span class="symbol">' + position.symbol + '</span><span class="leverage">' + position.leverage + 'x</span>';
+      row.cells[1].innerText = parseFloat(position.size).toFixed(8);
+      row.cells[2].innerText = parseFloat(position.entryPrice).toFixed(8);
+      row.cells[3].innerText = parseFloat(position.currentPrice).toFixed(8);
+      row.cells[4].innerText = parseFloat(position.margin).toFixed(8) + ' USDT';
+
+      var pnl = parseFloat(position.unrealizedPnl);
+      var pnlPercent = (pnl / parseFloat(position.margin)) * 100;
+      var pnlText = pnl.toFixed(2) + ' USDT (' + pnlPercent.toFixed(2) + '%)';
+      row.cells[5].innerHTML = '<span>' + pnlText + '</span>';
+      row.cells[5].className = pnl >= 0 ? 'positive' : 'negative';
+    }
+  }
+
+  connect();
+</script>
+</body>
+</html>

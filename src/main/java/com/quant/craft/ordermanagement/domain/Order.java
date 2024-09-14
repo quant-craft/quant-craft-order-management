@@ -27,10 +27,15 @@ public class Order {
 
     @Column(unique = true, nullable = false)
     private String orderId;
+    @Column(unique = true)
+    private String clientOrderId;
     private Long tradingBotId;
     private String symbol;
-    private String exchange;
+    @Enumerated(EnumType.STRING)
+    private ExchangeType exchange;
+    @Column(precision = 30, scale = 8)
     private BigDecimal size;
+    @Column(precision = 30, scale = 8)
     private BigDecimal price;
     private int leverage;
 
@@ -63,11 +68,15 @@ public class Order {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
+    @Version
+    private Long version;
+
     @Builder
-    public Order(String orderId, Long tradingBotId, String symbol, String exchange,
+    public Order(String orderId,String clientOrderId, Long tradingBotId, String symbol, ExchangeType exchange,
                  BigDecimal size, BigDecimal price, int leverage,
                  OrderType type, OrderStatus status, TradeDirection direction, OrderAction action, ProcessingStatus processingStatus) {
         this.orderId = orderId;
+        this.clientOrderId = clientOrderId;
         this.tradingBotId = tradingBotId;
         this.symbol = symbol;
         this.exchange = exchange;
@@ -97,5 +106,9 @@ public class Order {
 
     public void setStatus(OrderStatus orderStatus) {
         this.status = orderStatus;
+    }
+
+    public void setClientOrderId(String clientOrderId) {
+        this.clientOrderId = clientOrderId;
     }
 }

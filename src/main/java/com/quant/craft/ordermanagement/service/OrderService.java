@@ -2,6 +2,8 @@ package com.quant.craft.ordermanagement.service;
 
 import com.quant.craft.ordermanagement.domain.*;
 import com.quant.craft.ordermanagement.dto.OrderDto;
+import com.quant.craft.ordermanagement.exception.BusinessException;
+import com.quant.craft.ordermanagement.exception.ErrorCode;
 import com.quant.craft.ordermanagement.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,14 +17,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
-
-    @Transactional
-    public Order createAndSaveOrder(OrderDto orderDto) {
-        validateOrderDto(orderDto);
-        Order order = createOrder(orderDto);
-        addConditionalOrders(order, orderDto);
-        return orderRepository.save(order);
-    }
 
     @Transactional
     public Order saveOrder(Order order) {
@@ -41,7 +35,7 @@ public class OrderService {
                 .orderId(orderDto.getOrderId())
                 .tradingBotId(orderDto.getTradingBotId())
                 .symbol(orderDto.getSymbol())
-                .exchange(orderDto.getExchange().name())
+                .exchange(orderDto.getExchange())
                 .size(orderDto.getSize().abs())
                 .price(orderDto.getLimit())
                 .leverage(orderDto.getLeverage())
@@ -102,4 +96,14 @@ public class OrderService {
         return orderRepository.findOpenOrdersByTradingBotIdAndSymbol(tradingBotId, symbol);
     }
 
+    @Transactional(readOnly = true)
+    public Order findOrderByClientOrderId(String clientOrderId) {
+        return orderRepository.findByClientOrderIdWithLock(clientOrderId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND_BY_CLIENT_ORDER_ID, "ClientOrderId : " + clientOrderId));
+    }
+
+    @Transactional(readOnly = true)
+    public List<Order> getAllOrdersByProcessingStatus(ProcessingStatus processingStatus) {
+        return orderRepository.findAllByProcessingStatus(processingStatus);
+    }
 }
