@@ -1,90 +1,96 @@
 package com.quant.craft.ordermanagement.service;
 
 import com.quant.craft.ordermanagement.domain.*;
-import com.quant.craft.ordermanagement.exception.ErrorCode;
-import com.quant.craft.ordermanagement.exception.PositionNotFoundException;
 import com.quant.craft.ordermanagement.repository.PositionRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PositionService {
     private final PositionRepository positionRepository;
     private final TradingBotService tradingBotService;
 
-    public Position findExistingPositions(long tradingBotId, String symbol) {
-        return positionRepository.findOpenPositionsByTradingBotIdAndSymbolWithLock(
-                        tradingBotId, symbol, ExchangeType.SIMULATED)
-                .orElseThrow(() -> new PositionNotFoundException(ErrorCode.POSITION_NOT_FOUND,
-                        "TradingBotId: " + tradingBotId + ", Symbol: " + symbol));
+    @Transactional(readOnly = true)
+    public List<Position> getAllPositions() {
+        return positionRepository.findAll();
     }
-
+    @Transactional(readOnly = true)
+    public Optional<Position> findExistingPosition(long tradingBotId, String symbol, ExchangeType exchangeType) {
+        return positionRepository.findOpenPositionsByTradingBotIdAndSymbolWithLock(tradingBotId, symbol, exchangeType);
+    }
 
     @Transactional
-    public void updatePosition(Trade trade, int leverage) {
-        Position position = findExistingPositions(trade.getTradingBotId(), trade.getSymbol());
+    public void updatePosition(long tradingBotId, String symbol, ExchangeType exchangeType,
+                               TradeDirection direction, BigDecimal size, BigDecimal price,
+                               OrderAction action, int leverage) {
+        Optional<Position> positionOptional = findExistingPosition(tradingBotId, symbol, exchangeType);
 
-        if (position.getDirection() == trade.getDirection()) {
-            updateExistingPosition(position, trade);
-        } else {
-            BigDecimal remainingSize = closeOrReducePosition(position, trade);
-            if (remainingSize.compareTo(BigDecimal.ZERO) > 0) {
-                createNewPosition(trade, leverage, remainingSize);
+        if (positionOptional.isPresent()) {
+            Position position = positionOptional.get();
+            if (position.getDirection() == direction) {
+                updateExistingPosition(position, size, price);
+            } else {
+                BigDecimal remainingSize = closeOrReducePosition(position, size, price);
+                if (remainingSize.compareTo(BigDecimal.ZERO) > 0) {
+                    createNewPosition(tradingBotId, symbol, exchangeType, direction, remainingSize, price, leverage);
+                }
             }
-        }
-
-        if (trade.getAction() == OrderAction.OPEN) {
-            createNewPosition(trade, leverage, trade.getExecutedSize());
+        } else if (action == OrderAction.OPEN) {
+            createNewPosition(tradingBotId, symbol, exchangeType, direction, size, price, leverage);
         }
     }
 
-
-    private void updateExistingPosition(Position position, Trade trade) {
-        BigDecimal newSize = position.getSize().add(trade.getExecutedSize());
-        BigDecimal newEntryPrice = calculateNewEntryPrice(position, trade);
+    private void updateExistingPosition(Position position, BigDecimal additionalSize, BigDecimal newPrice) {
+        BigDecimal newSize = position.getSize().add(additionalSize);
+        BigDecimal newEntryPrice = calculateNewEntryPrice(position, additionalSize, newPrice);
         position.updatePosition(newSize, newEntryPrice);
     }
 
-    private BigDecimal closeOrReducePosition(Position position, Trade trade) {
-        BigDecimal remainingSize = trade.getExecutedSize().subtract(position.getSize());
+    private BigDecimal closeOrReducePosition(Position position, BigDecimal closeSize, BigDecimal exitPrice) {
+        BigDecimal remainingSize = closeSize.subtract(position.getSize());
         if (remainingSize.compareTo(BigDecimal.ZERO) <= 0) {
-            BigDecimal pnl = position.partialClose(trade.getExecutedSize(), trade.getExecutedPrice());
-
-            tradingBotService.updateCashWithOptimisticLock(trade.getTradingBotId(), pnl);
+            BigDecimal pnl = position.partialClose(closeSize, exitPrice);
+            tradingBotService.updateCashWithOptimisticLock(position.getTradingBotId(), pnl);
+            positionRepository.save(position);
             return BigDecimal.ZERO;
         } else {
-            BigDecimal pnl = position.closePosition(trade.getExecutedPrice());
-
-            tradingBotService.updateCashWithOptimisticLock(trade.getTradingBotId(), pnl);
+            BigDecimal pnl = position.closePosition(exitPrice);
+            tradingBotService.updateCashWithOptimisticLock(position.getTradingBotId(), pnl);
+            positionRepository.save(position);
             return remainingSize;
         }
     }
 
-    private void createNewPosition(Trade trade, int leverage, BigDecimal size) {
+    private void createNewPosition(long tradingBotId, String symbol, ExchangeType exchangeType,
+                                   TradeDirection direction, BigDecimal size, BigDecimal price, int leverage) {
         Position newPosition = Position.builder()
                 .positionId(generatePositionId())
-                .tradingBotId(trade.getTradingBotId())
-                .symbol(trade.getSymbol())
-                .exchange(trade.getExchange())
+                .tradingBotId(tradingBotId)
+                .symbol(symbol)
+                .exchange(exchangeType)
                 .size(size)
-                .entryPrice(trade.getExecutedPrice())
+                .entryPrice(price)
                 .leverage(leverage)
-                .direction(trade.getDirection())
+                .direction(direction)
                 .status(PositionStatus.OPEN)
                 .build();
         positionRepository.save(newPosition);
     }
 
-    private BigDecimal calculateNewEntryPrice(Position position, Trade trade) {
+    private BigDecimal calculateNewEntryPrice(Position position, BigDecimal additionalSize, BigDecimal newPrice) {
         BigDecimal totalValue = position.getSize().multiply(position.getEntryPrice())
-                .add(trade.getExecutedSize().multiply(trade.getExecutedPrice()));
-        BigDecimal totalSize = position.getSize().add(trade.getExecutedSize());
+                .add(additionalSize.multiply(newPrice));
+        BigDecimal totalSize = position.getSize().add(additionalSize);
         return totalValue.divide(totalSize, 8, RoundingMode.HALF_UP);
     }
 
