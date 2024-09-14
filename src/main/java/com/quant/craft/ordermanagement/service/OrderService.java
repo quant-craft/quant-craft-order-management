@@ -109,4 +109,9 @@ public class OrderService {
         return orderRepository.findByClientOrderIdWithLock(clientOrderId)
                 .orElseThrow(() -> new OrderNotFoundException(ErrorCode.ORDER_NOT_FOUND_BY_CLIENT_ORDER_ID, "ClientOrderId : " + clientOrderId));
     }
+
+    @Transactional(readOnly = true)
+    public List<Order> getAllOrdersByProcessingStatus(ProcessingStatus processingStatus) {
+        return orderRepository.findAllByProcessingStatus(processingStatus);
+    }
 }

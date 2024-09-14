@@ -1,0 +1,74 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #161a1e;
+    color: #eaecef;
+    margin: 0;
+    padding: 20px;
+}
+
+.trading-container {
+    background-color: #1e222d;
+    border-radius: 4px;
+    padding: 16px;
+}
+
+.tab {
+    overflow: hidden;
+    border-bottom: 1px solid #2e3241;
+}
+
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    color: #848e9c;
+}
+
+.tab button:hover {
+    background-color: #2e3241;
+}
+
+.tab button.active {
+    background-color: #2e3241;
+    color: #eaecef;
+}
+
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border-top: none;
+}
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+th, td {
+    padding: 12px 8px;
+    text-align: right;
+    border-bottom: 1px solid #2e3241;
+    font-size: 14px;
+}
+
+th {
+    color: #848e9c;
+    font-weight: 400;
+}
+
+td:first-child, th:first-child {
+    text-align: left;
+}
+
+.positive {
+    color: #0ecb81;
+}
+
+.negative {
+    color: #f6465d;
+}
