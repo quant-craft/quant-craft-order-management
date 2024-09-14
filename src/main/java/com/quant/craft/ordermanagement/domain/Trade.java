@@ -36,7 +36,7 @@ public class Trade {
     private BigDecimal executedPrice;
 
     @Enumerated(EnumType.STRING)
-    private TradeDirection direction;
+    private Side side;
 
     @Enumerated(EnumType.STRING)
     private OrderAction action;
@@ -47,7 +47,7 @@ public class Trade {
     @Builder
     public Trade(String tradeId, Long tradingBotId, String orderId, String symbol, ExchangeType exchange,
                  BigDecimal executedSize, BigDecimal executedPrice,
-                 TradeDirection direction, OrderAction action) {
+                 Side side, OrderAction action) {
         this.tradeId = tradeId;
         this.tradingBotId = tradingBotId;
         this.orderId = orderId;
@@ -55,7 +55,7 @@ public class Trade {
         this.exchange = exchange;
         this.executedSize = executedSize;
         this.executedPrice = executedPrice;
-        this.direction = direction;
+        this.side = side;
         this.action = action;
     }
 }

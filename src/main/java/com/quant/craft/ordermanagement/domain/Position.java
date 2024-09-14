@@ -50,7 +50,7 @@ public class Position {
     private PositionStatus status;
 
     @Enumerated(EnumType.STRING)
-    private TradeDirection direction;
+    private PositionSide positionSide;
 
     @CreatedDate
     private LocalDateTime openedAt;
@@ -65,7 +65,7 @@ public class Position {
 
     @Builder
     public Position(String positionId, Long tradingBotId, String symbol, ExchangeType exchange,
-                    BigDecimal size, BigDecimal entryPrice, int leverage, PositionStatus status, TradeDirection direction) {
+                    BigDecimal size, BigDecimal entryPrice, int leverage, PositionStatus status, PositionSide positionSide) {
         this.positionId = positionId;
         this.tradingBotId = tradingBotId;
         this.symbol = symbol;
@@ -73,7 +73,7 @@ public class Position {
         this.size = size;
         this.entryPrice = entryPrice;
         this.leverage = leverage;
-        this.direction = direction;
+        this.positionSide = positionSide;
         this.status = PositionStatus.OPEN;
         this.currentPrice = entryPrice;
         this.unrealizedPnl = BigDecimal.ZERO;
@@ -94,7 +94,7 @@ public class Position {
     private void calculateUnrealizedPnl() {
         BigDecimal priceDifference = currentPrice.subtract(entryPrice);
         this.unrealizedPnl = priceDifference.multiply(size);
-        if (direction == TradeDirection.SHORT) {
+        if (positionSide == PositionSide.SHORT) {
             this.unrealizedPnl = this.unrealizedPnl.negate();
         }
     }
@@ -124,7 +124,7 @@ public class Position {
     private BigDecimal calculatePnl(BigDecimal exitPrice) {
         BigDecimal priceDifference = exitPrice.subtract(entryPrice);
         BigDecimal pnl = priceDifference.multiply(size);
-        return direction == TradeDirection.SHORT ? pnl.negate() : pnl;
+        return positionSide == PositionSide.SHORT ? pnl.negate() : pnl;
     }
 
     public void updatePosition(BigDecimal newSize, BigDecimal newEntryPrice) {
