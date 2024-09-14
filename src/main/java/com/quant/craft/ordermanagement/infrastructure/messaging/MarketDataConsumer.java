@@ -1,4 +1,4 @@
-package com.quant.craft.ordermanagement.messaging;
+package com.quant.craft.ordermanagement.infrastructure.messaging;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.quant.craft.ordermanagement.dto.MarketData;
