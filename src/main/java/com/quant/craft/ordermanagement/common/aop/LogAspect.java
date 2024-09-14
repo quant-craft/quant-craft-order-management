@@ -1,6 +1,6 @@
 package com.quant.craft.ordermanagement.common.aop;
 
-import com.quant.craft.ordermanagement.exception.ExchangeException;
+import com.quant.craft.ordermanagement.common.exception.ExchangeException;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;

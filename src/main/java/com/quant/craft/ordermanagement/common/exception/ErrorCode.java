@@ -1,4 +1,4 @@
-package com.quant.craft.ordermanagement.exception;
+package com.quant.craft.ordermanagement.common.exception;
 
 public enum ErrorCode {
     INVALID_INPUT(400, "Invalid input"),

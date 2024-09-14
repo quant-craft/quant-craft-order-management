@@ -1,4 +1,4 @@
-package com.quant.craft.ordermanagement.exception;
+package com.quant.craft.ordermanagement.common.exception;
 
 
 import com.quant.craft.ordermanagement.domain.exchange.ExchangeType;

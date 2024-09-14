@@ -1,4 +1,4 @@
-package com.quant.craft.ordermanagement.exception;
+package com.quant.craft.ordermanagement.common.exception;
 
 public class BinanceException extends BusinessException {
 
