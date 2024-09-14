@@ -1,4 +1,4 @@
-package com.quant.craft.ordermanagement.domain;
+package com.quant.craft.ordermanagement.domain.exchange;
 
 
 public enum ExchangeType {

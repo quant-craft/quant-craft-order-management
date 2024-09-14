@@ -1,8 +1,8 @@
-package com.quant.craft.ordermanagement.domain;
+package com.quant.craft.ordermanagement.domain.exchange;
 
+import com.quant.craft.ordermanagement.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 

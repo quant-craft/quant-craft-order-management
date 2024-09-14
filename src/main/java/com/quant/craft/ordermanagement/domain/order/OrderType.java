@@ -1,4 +1,4 @@
-package com.quant.craft.ordermanagement.domain;
+package com.quant.craft.ordermanagement.domain.order;
 
 import java.math.BigDecimal;
 

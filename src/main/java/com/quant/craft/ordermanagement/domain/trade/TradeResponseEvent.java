@@ -1,5 +1,6 @@
-package com.quant.craft.ordermanagement.domain;
+package com.quant.craft.ordermanagement.domain.trade;
 
+import com.quant.craft.ordermanagement.domain.order.Order;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

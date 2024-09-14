@@ -1,7 +1,7 @@
 package com.quant.craft.ordermanagement.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.quant.craft.ordermanagement.domain.ExchangeType;
+import com.quant.craft.ordermanagement.domain.exchange.ExchangeType;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 

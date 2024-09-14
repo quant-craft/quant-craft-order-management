@@ -1,7 +1,7 @@
 package com.quant.craft.ordermanagement.exception;
 
 
-import com.quant.craft.ordermanagement.domain.ExchangeType;
+import com.quant.craft.ordermanagement.domain.exchange.ExchangeType;
 
 public class ExchangeException extends BusinessException {
     private final ExchangeType exchangeType;

@@ -1,5 +1,6 @@
-package com.quant.craft.ordermanagement.domain;
+package com.quant.craft.ordermanagement.domain.user;
 
+import com.quant.craft.ordermanagement.domain.exchange.ExchangeApiKey;
 import com.quant.craft.ordermanagement.domain.bot.TradingBot;
 import jakarta.persistence.*;
 import lombok.*;

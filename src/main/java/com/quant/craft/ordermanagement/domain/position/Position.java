@@ -1,5 +1,7 @@
-package com.quant.craft.ordermanagement.domain;
+package com.quant.craft.ordermanagement.domain.position;
 
+import com.quant.craft.ordermanagement.domain.exchange.ExchangeType;
+import com.quant.craft.ordermanagement.domain.enums.PositionSide;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

@@ -1,4 +1,4 @@
-package com.quant.craft.ordermanagement.domain;
+package com.quant.craft.ordermanagement.domain.order;
 
 public enum OrderStatus {
     NEW,
