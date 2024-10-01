@@ -62,6 +62,11 @@ public class WebSocketManager {
         return new BotWebSocketConnection(botId, apiKey, binanceApiClient, binanceMessageHandler);
     }
 
+    /**
+     * TODO
+     * 일단 가져와서 disconnect하게 되면 제거해야함.
+     * 현재 코드는 disconnect 상관없이 바로 삭제하고있음.
+     */
     private void removeBot(Long botId) {
         BotWebSocketConnection connection = botConnections.remove(botId);
         if (connection != null) {
