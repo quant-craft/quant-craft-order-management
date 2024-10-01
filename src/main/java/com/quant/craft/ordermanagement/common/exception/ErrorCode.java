@@ -18,6 +18,7 @@ public enum ErrorCode {
     BINANCE_ORDER_PROCESSING_ERROR(400, "바이낸스 주문 처리 오류"),
     BINANCE_INVALID_API_CREDENTIALS(401, "유효하지 않은 바이낸스 API 자격 증명"),
 
+    BOT_WEBSOCKET_CONNECTION_ERROR(500, "봇 웹소켓 연결 오류"),
     BOT_WEBSOCKET_DISCONNECTION_ERROR(500, "봇 웹소켓 연결 해제 오류"),
     BOT_WEBSOCKET_LISTEN_KEY_ERROR(500, "봇 웹소켓 ListenKey 오류");
 
