@@ -1,4 +1,4 @@
-package com.quant.craft.ordermanagement.config;
+package com.quant.craft.ordermanagement.common.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
