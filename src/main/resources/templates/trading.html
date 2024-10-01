@@ -66,7 +66,7 @@
         <td th:text="${order.orderId}"></td>
         <td th:text="${order.symbol}"></td>
         <td th:text="${order.type}"></td>
-        <td th:text="${order.direction}"></td>
+        <td th:text="${order.side}"></td>
         <td th:text="${#numbers.formatDecimal(order.price, 1, 8)}"></td>
         <td th:text="${#numbers.formatDecimal(order.size, 1, 8)}"></td>
         <td th:text="${order.status}"></td>
@@ -96,7 +96,7 @@
         <td th:text="${order.orderId}"></td>
         <td th:text="${order.symbol}"></td>
         <td th:text="${order.type}"></td>
-        <td th:text="${order.direction}"></td>
+        <td th:text="${order.side}"></td>
         <td th:text="${#numbers.formatDecimal(order.price, 1, 8)}"></td>
         <td th:text="${#numbers.formatDecimal(order.size, 1, 8)}"></td>
         <td th:text="${order.status}"></td>
@@ -126,7 +126,7 @@
         <td th:text="${trade.tradeId}"></td>
         <td th:text="${trade.orderId}"></td>
         <td th:text="${trade.symbol}"></td>
-        <td th:text="${trade.direction}"></td>
+        <td th:text="${trade.side}"></td>
         <td th:text="${#numbers.formatDecimal(trade.executedPrice, 1, 8)}"></td>
         <td th:text="${#numbers.formatDecimal(trade.executedSize, 1, 8)}"></td>
         <td th:text="${trade.action}"></td>
@@ -160,10 +160,15 @@
     stompClient.connect({}, function(frame) {
       console.log('Connected: ' + frame);
       stompClient.subscribe('/topic/positions', function(message) {
-        updatePosition(JSON.parse(message.body));
+        refreshPage()
+        // updatePosition(JSON.parse(message.body));
       });
-      // Add more subscriptions for orders and trades if needed
     });
+  }
+
+  function refreshPage() {
+    console.log('Refreshing page...');
+    location.reload();
   }
 
   function updatePosition(position) {
