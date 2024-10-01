@@ -1,26 +1,25 @@
 package com.quant.craft.ordermanagement.common.exception;
 
 public enum ErrorCode {
-    INVALID_INPUT(400, "Invalid input"),
-    RESOURCE_NOT_FOUND(404, "Resource not found"),
-    INTERNAL_SERVER_ERROR(500, "Internal server error"),
+    EXCHANGE_API_ERROR(500, "거래소 API 오류"),
+    EXCHANGE_PARSING_ERROR(500, "거래소 응답 파싱 오류"),
+    EXCHANGE_CONNECTION_ERROR(500, "거래소 연결 오류"),
 
-    EXCHANGE_API_ERROR(500, "Exchange API error"),
-    EXCHANGE_PARSING_ERROR(500, "Exchange response parsing error"),
-    EXCHANGE_CONNECTION_ERROR(500, "Exchange connection error"),
+    TRADING_BOT_NOT_FOUND(404, "트레이딩 봇을 찾을 수 없음"),
 
-    TRADING_BOT_NOT_FOUND(404, "Trading bot not found"),
+    API_KEY_NOT_FOUND(404, "API 키를 찾을 수 없음"),
 
-    API_KEY_NOT_FOUND(404, "API key not found"),
+    ORDER_NOT_FOUND_BY_CLIENT_ORDER_ID(404, "주어진 클라이언트 주문 ID로 주문을 찾을 수 없음"),
 
-    ORDER_NOT_FOUND_BY_CLIENT_ORDER_ID(404, "Order not found with the given client order ID"),
+    POSITION_NOT_FOUND(404, "포지션을 찾을 수 없음"),
 
-    POSITION_NOT_FOUND(404, "Position not found"),
+    BINANCE_API_ERROR(500, "바이낸스 API 오류 발생"),
+    BINANCE_WEBSOCKET_ERROR(500, "바이낸스 웹소켓 오류 발생"),
+    BINANCE_ORDER_PROCESSING_ERROR(400, "바이낸스 주문 처리 오류"),
+    BINANCE_INVALID_API_CREDENTIALS(401, "유효하지 않은 바이낸스 API 자격 증명"),
 
-    BINANCE_API_ERROR(500, "Binance API error occurred"),
-    BINANCE_WEBSOCKET_ERROR(500, "Binance WebSocket error occurred"),
-    BINANCE_ORDER_PROCESSING_ERROR(400, "Error processing Binance order"),
-    BINANCE_INVALID_API_CREDENTIALS(401, "Invalid Binance API credentials");
+    BOT_WEBSOCKET_DISCONNECTION_ERROR(500, "봇 웹소켓 연결 해제 오류"),
+    BOT_WEBSOCKET_LISTEN_KEY_ERROR(500, "봇 웹소켓 ListenKey 오류");
 
     private final int status;
     private final String message;
