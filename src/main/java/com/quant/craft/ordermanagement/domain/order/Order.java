@@ -49,7 +49,7 @@ public class Order {
     @Column(name = "size", precision = 30, scale = 8, nullable = false)
     private BigDecimal size;
 
-    @Column(name = "price", precision = 30, scale = 8, nullable = false)
+    @Column(name = "price", precision = 30, scale = 8)
     private BigDecimal price;
 
     @Column(name = "leverage", nullable = false)
