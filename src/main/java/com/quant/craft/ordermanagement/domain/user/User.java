@@ -19,9 +19,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true)
-    private String username;
-    private LocalDateTime createdAt;
+    private String nickname;
     @OneToMany(mappedBy = "user")
     private List<ExchangeApiKey> exchangeApiKeys;
     @OneToMany(mappedBy = "user")

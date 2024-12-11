@@ -8,15 +8,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 // 이건 사실 나중에 어떻게 해야할 지 더 세부적으로 구현 필요함
 @Entity
-@Table(name = "conditional_orders")
+@Table(name = "conditional_orders", schema = "trade")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 public class ConditionalOrder {
 
     @Id
@@ -36,9 +38,11 @@ public class ConditionalOrder {
     private ProcessingStatus processingStatus;
 
     @CreatedDate
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @LastModifiedDate
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     @Builder

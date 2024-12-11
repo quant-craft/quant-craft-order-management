@@ -16,7 +16,7 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "positions")
+@Table(name = "positions", schema = "trade")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
@@ -24,45 +24,64 @@ public class Position {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "position_id", unique = true, nullable = false)
     private String positionId;
 
+    @Column(name = "trading_bot_id", nullable = false)
     private Long tradingBotId;
+
+    @Column(name = "symbol", nullable = false)
     private String symbol;
+
     @Enumerated(EnumType.STRING)
+    @Column(name = "exchange", nullable = false)
     private ExchangeType exchange;
-    @Column(precision = 30, scale = 8)
+
+    @Column(name = "size", precision = 30, scale = 8, nullable = false)
     private BigDecimal size;
-    @Column(precision = 30, scale = 8)
+
+    @Column(name = "entry_price", precision = 30, scale = 8, nullable = false)
     private BigDecimal entryPrice;
 
     @Transient
     private BigDecimal currentPrice;
+
     @Transient
     private BigDecimal unrealizedPnl;
-    @Column(precision = 30, scale = 8)
+
+    @Column(name = "realized_pnl", precision = 30, scale = 8, nullable = false)
     private BigDecimal realizedPnl;
+
     @Transient
     private BigDecimal margin;
+
+    @Column(name = "leverage", nullable = false)
     private int leverage;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
     private PositionStatus status;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "position_side", nullable = false)
     private PositionSide positionSide;
 
     @CreatedDate
-    private LocalDateTime openedAt;
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 
     @LastModifiedDate
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(name = "closed_at")
     private LocalDateTime closedAt;
 
     @Version
+    @Column(name = "version", nullable = false)
     private Long version;
 
     @Builder

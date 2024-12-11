@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "trades")
+@Table(name = "trades", schema = "trade")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
@@ -23,28 +23,41 @@ public class Trade {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "trade_id", unique = true, nullable = false)
     private String tradeId;
+
+    @Column(name = "trading_bot_id", nullable = false)
     private Long tradingBotId;
+
+    @Column(name = "order_id", nullable = false)
     private String orderId;
 
+    @Column(name = "symbol", nullable = false)
     private String symbol;
+
     @Enumerated(EnumType.STRING)
+    @Column(name = "exchange", nullable = false)
     private ExchangeType exchange;
-    @Column(precision = 30, scale = 8)
+
+    @Column(name = "executed_size", precision = 30, scale = 8, nullable = false)
     private BigDecimal executedSize;
-    @Column(precision = 30, scale = 8)
+
+    @Column(name = "executed_price", precision = 30, scale = 8, nullable = false)
     private BigDecimal executedPrice;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "side", nullable = false)
     private Side side;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "action", nullable = false)
     private OrderAction action;
 
     @CreatedDate
+    @Column(name = "executed_at", nullable = false)
     private LocalDateTime executedAt;
 
     @Builder
