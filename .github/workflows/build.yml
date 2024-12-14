@@ -18,7 +18,6 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-
     # SSH 키 설정 단계 추가
     - name: Set up SSH keys
       run: |
