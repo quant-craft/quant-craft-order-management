@@ -43,14 +43,14 @@ jobs:
 
     - name: Deploy to Server
       run: |
-        scp -P ${{ vars.SERVER_PORT }} build/libs/*.jar ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }}:${{ vars.DEPLOY_PATH }}/
+        scp -P ${{ vars.SERVER_PORT }} build/libs/*.jar ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }}:${{ vars.DEPLOY_PATH }}/${{ vars.JAR_NAME }}
 
     - name: Execute deploy script
       run: |
         ssh -p ${{ vars.SERVER_PORT }} ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }} "
           cd ${{ vars.DEPLOY_PATH }} && 
           if pgrep java; then pkill java; fi && 
-          nohup java -jar *.jar > app.log 2>&1 &
+          nohup java -jar ${{ vars.JAR_NAME }} > app.log 2>&1 &
         "
 
     - name: Cleanup SSH keys
