@@ -31,9 +31,7 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build with Gradle
-      env:
-        JAR_NAME: "${{ vars.JAR_NAME }}"
-      run: ./gradlew build -x test
+      run: ./gradlew bootJar
 
     - name: Create application.yml
       run: |
@@ -52,7 +50,7 @@ jobs:
         ssh -p ${{ vars.SERVER_PORT }} ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }} "
           cd ${{ vars.DEPLOY_PATH }} && 
           if pgrep java; then pkill java; fi && 
-          nohup java -jar ${{ vars.JAR_NAME }} > app.log 2>&1 &
+          nohup java -jar *.jar > app.log 2>&1 &
         "
 
     - name: Cleanup SSH keys
