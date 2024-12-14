@@ -14,9 +14,6 @@ public class OrderDto {
     @JsonProperty("order_id")
     private String orderId;
     @NotNull
-    @JsonProperty("bot_id")
-    private Long botId;
-    @NotNull
     @JsonProperty("trading_bot_id")
     private Long tradingBotId;
     @NotNull
