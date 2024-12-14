@@ -1,5 +1,8 @@
 package com.quant.craft.ordermanagement.EMS;
 
+import com.quant.craft.ordermanagement.common.exception.ErrorCode;
+import com.quant.craft.ordermanagement.common.exception.ExchangeException;
+import com.quant.craft.ordermanagement.domain.exchange.ExchangeType;
 import com.quant.craft.ordermanagement.domain.order.Order;
 import com.quant.craft.ordermanagement.domain.trade.Trade;
 import com.quant.craft.ordermanagement.domain.trade.TradeResponseEvent;
@@ -29,12 +32,19 @@ public class MatchingEngine {
     @Transactional
     public void match(Order order) {
         OHLCVData latestData = dataLoaderService.getLatestOHLCVData(order.getExchange().name(), order.getSymbol());
+        validateOHLCVData(latestData);
         BigDecimal executionPrice = latestData.getClose();
 
         Trade trade = executeTrade(order, order.getSize(), executionPrice);
         trade = tradeRepository.save(trade);
 
         eventPublisher.publishEvent(new TradeResponseEvent(trade,order));
+    }
+
+    private void validateOHLCVData(OHLCVData data) {
+        if(data == null){
+            throw new ExchangeException(ExchangeType.SIMULATED, ErrorCode.INVALID_MARKET_DATA);
+        }
     }
 
     private Trade executeTrade(Order order, BigDecimal size, BigDecimal price) {

@@ -20,7 +20,11 @@ public enum ErrorCode {
 
     BOT_WEBSOCKET_CONNECTION_ERROR(500, "봇 웹소켓 연결 오류"),
     BOT_WEBSOCKET_DISCONNECTION_ERROR(500, "봇 웹소켓 연결 해제 오류"),
-    BOT_WEBSOCKET_LISTEN_KEY_ERROR(500, "봇 웹소켓 ListenKey 오류");
+    BOT_WEBSOCKET_LISTEN_KEY_ERROR(500, "봇 웹소켓 ListenKey 오류"),
+    EVENT_PUBLISHING_ERROR(500, "이벤트 퍼블리싱 오류"),
+    INVALID_MARKET_DATA(500, "비정상적인 마켓 데이터 오류"),
+    ;
+
 
     private final int status;
     private final String message;
