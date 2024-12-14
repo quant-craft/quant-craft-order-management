@@ -27,7 +27,7 @@ public class MarketDataConsumer {
      * switch case 문 삭제하고 Config파일에서 관리할 수 있도록하기
      */
 
-    @KafkaListener(topics = "${kafka.topic.ohlcv}", groupId = "${kafka.group-id}")
+    @KafkaListener(topics = "${kafka.topic.ohlcv}", groupId = "${kafka.group-id.ohlcv}", containerFactory = "marketDataKafkaListenerContainerFactory")
     public void consume(ConsumerRecord<String, String> record) throws IOException {
         MarketData marketData = objectMapper.readValue(record.value(), MarketData.class);
 
@@ -48,6 +48,10 @@ public class MarketDataConsumer {
 
     private void processOHLCVData(OHLCVData ohlcvData) {
         dataLoaderService.processOHLCVData(ohlcvData);
+        log.info("Processing OHLCV Data for {}: {} Open, {} Close",
+                ohlcvData.getSymbol(),
+                ohlcvData.getOpen(),
+                ohlcvData.getClose());
     }
 
     private void processOrderBookData(OrderBookData orderBookData) {
