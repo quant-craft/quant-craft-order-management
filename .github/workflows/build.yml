@@ -33,9 +33,10 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build -x test
 
-    - name: Copy application.yml from server
+    - name: Create application.yml
       run: |
-        scp -P ${{ vars.SERVER_PORT }} ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }}:${{ vars.DEPLOY_PATH }}/application.yml src/main/resources/
+        mkdir -p src/main/resources
+        echo "${{ secrets.APPLICATION_YML }}" > src/main/resources/application.yml
 
     - name: Build with Gradle (after copying application.yml)
       run: ./gradlew build -x test
