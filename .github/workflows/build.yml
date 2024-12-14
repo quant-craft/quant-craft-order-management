@@ -31,6 +31,8 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build with Gradle
+      env:
+        JAR_NAME: "${{ vars.JAR_NAME }}"
       run: ./gradlew build -x test
 
     - name: Create application.yml
